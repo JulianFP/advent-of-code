@@ -69,7 +69,7 @@ class day11{
         }
     }
 
-    //performs breadth-first search beginning at _start and returns depth where _end was encountered
+    //performs breadth-first search beginning at starting_point and returns depth where _end was encountered
     int bfs(std::array<int, 2> starting_point){
         std::set<std::array<int, 2>> B = {starting_point}, new_B, visited = {starting_point};
         int depth = 0;
