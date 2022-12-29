@@ -14,12 +14,17 @@
     std::array<int, 2> = {x,y}
 */
 
-class day12{
+class day14{
     protected:
     std::deque<std::vector<char>> _matrix;
     int _maxRow, _minCol, _maxCol;
     bool _full = false; //stores if configuration is full of sand
 
+    /*
+    reads a coordinate from line. line.tellg() has to be right before first number of coordinate 
+    processes following characters: "<int>,<int> -> " (example: "498,4 -> ")
+    after this function line.tellg() is right before first number of next coordinate again or line.eof() is set
+    */
     std::array<int, 2> _read_coord(std::stringstream &line){
         std::array<int, 2> result;
         line >> result[0];
@@ -34,6 +39,7 @@ class day12{
         return result;
     }
 
+    //draws a line from firstPoint to secondPoint into the matrix
     void _draw_line(std::array<int, 2> firstPoint, std::array<int, 2> secondPoint){
         int minX = std::min(firstPoint[0], secondPoint[0]);
         int maxX = std::max(firstPoint[0], secondPoint[0]);
@@ -70,8 +76,15 @@ class day12{
         }
     }
 
-    virtual void _extendMatrix(int Col){
+    //outputs a new column for matrix
+    virtual std::vector<char> _newCol(){
         std::vector<char> newCol(_maxRow+1, '.');
+        return newCol;
+    }
+
+    //checks if Col is outside matrix in which case it adds new columns
+    void _extendMatrix(int Col){
+        std::vector<char> newCol = _newCol();
         while(Col > _maxCol){
             _matrix.push_back(newCol);
             ++_maxCol;
@@ -82,6 +95,7 @@ class day12{
         }
     }
 
+    //checks if coord is blocked by '#' or 'o'
     bool _blocked(std::array<int, 2> coord){
         if(coord[0] < _minCol || coord[0] > _maxCol){
             _extendMatrix(coord[0]);
@@ -93,8 +107,8 @@ class day12{
     }
 
     public:
-    //read file:
-    day12(std::string filename) : _matrix({{'+'}}), _maxRow(0), _minCol(500), _maxCol(500) {
+    //read file and build matrix:
+    day14(std::string filename) : _matrix({{'+'}}), _maxRow(0), _minCol(500), _maxCol(500) {
         std::string currentLine;
         std::ifstream file;
         std::array<int, 2> firstCoord, secondCoord;
@@ -113,6 +127,7 @@ class day12{
         file.close();
     }
 
+    //outputs matrix in std::cout
     void outputMatrix(){
         for(int row = 0; row <= _maxRow; row++){
             for(int column = _minCol; column <= _maxCol; column++){
@@ -123,6 +138,7 @@ class day12{
         std::cout << std::endl;
     }
 
+    //drops one piece of sand until it comes to rest or falls into void
     bool dropSand(){
         if(_full) return true;
         std::array<int, 2> currentCrd, nextCrd = {500, 0};
@@ -157,8 +173,9 @@ class day12{
     }
 };
 
-class day12_2 : public day12{
+class day14_2 : public day14{
     protected:
+    //draws floor under matrix (gets called after generating matrix)
     void _drawFloor(){
         for(std::vector<char> &column : _matrix){
             column.push_back('.');
@@ -167,21 +184,15 @@ class day12_2 : public day12{
         _maxRow += 2;
     }
 
-    void _extendMatrix(int Col) override{
+    //new columns have to include floor
+    std::vector<char> _newCol() override{
         std::vector<char> newCol(_maxRow, '.');
         newCol.push_back('#');
-        while(Col > _maxCol){
-            _matrix.push_back(newCol);
-            ++_maxCol;
-        }
-        while(Col < _minCol){
-            _matrix.push_front(newCol);
-            --_minCol;
-        }
+        return newCol;
     }
 
     public:
-    day12_2(std::string filename) : day12(filename){
+    day14_2(std::string filename) : day14(filename){
         _drawFloor();
     }
 };
@@ -190,7 +201,9 @@ int main(){
     std::string filename;
     std::cout << "Enter name of input file: " << std::flush;
     std::cin >> filename;
-    day12 part1(filename);
+
+    //part 1:
+    day14 part1(filename);
     part1.outputMatrix();
     int part1_result = 0;
     while(!part1.dropSand()){
@@ -199,7 +212,9 @@ int main(){
     }
     part1.outputMatrix();
     std::cout << "The solution for part 1 is: " << part1_result << std::endl;
-    day12_2 part2(filename);
+
+    //part 2, code here same as part1:
+    day14_2 part2(filename);
     part2.outputMatrix();
     int part2_result = 0;
     while(!part2.dropSand()){
