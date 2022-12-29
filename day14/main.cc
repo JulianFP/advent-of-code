@@ -8,7 +8,7 @@
 
 /*
     std::deque: List of columns, at column[0] is y=0
-    _maxRow: max y-coordinate stored in columns (or: size of columns)
+    _maxRow: max y-coordinate stored in columns (or: size of columns - 1)
     _minCol: x-coordinate of deque.front() (first element in deque)
     _maxCol: x-coordinate of deque.back() (last element in deque)
     std::array<int, 2> = {x,y}
