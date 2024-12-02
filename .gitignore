@@ -1,0 +1,16 @@
+a.out
+*put.txt
+*1.txt
+*2.txt
+*3.txt
+*.bin
+.vimspector.json
+buildDebug
+buildRelease
+build
+
+#Rust
+debug
+target
+**/*.rs.bk
+*.pdb
